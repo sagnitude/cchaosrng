@@ -33,7 +33,7 @@ main(int argc, char** argv){
 
   #ifdef PROFILE
   t_end = time(NULL) ;
-  printf("calculating %d points\ntime elasped from %ld to %ld: %ld milliseconds\n", pool->overallSize, t_start, t_end, t_end-t_start);
+  printf("calculating %d points\ntime elasped from %ld to %ld: %ld seconds\n", pool->overallSize, t_start, t_end, t_end-t_start);
   #endif
 
   #ifdef PRINTOUT
