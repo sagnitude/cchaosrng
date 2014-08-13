@@ -1,4 +1,14 @@
+#include <stdlib.h>
+#include <math.h>
+
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+
 #define CHAOSPOOL
+
+#define RANDOMMODE 1
+#define ALLLORENZMODE 2
 
 #ifndef CHAOSMODEL
 #include "cm.h"
@@ -6,7 +16,16 @@
 
 #define interval 0.00001
 //Using macros to customize the update functions for different types: instead of function pointers
-#define update(point) lorenzUpdater(point, interval)
+#define update(point) switch(point->type){\
+  case LORENZ:\
+    lorenzUpdater(point, interval);\
+  default:\
+    return;\
+}
+#define random(x) (double)(rand()%(x*1000000))/1000000
+#define randomInt(x) rand()%x
+#define typeCount 1
+#define DEBUG 1
 
 typedef struct ChaosPool{
   double entropy;
@@ -28,7 +47,7 @@ void
 swapPoints(int p1[], int p2[], ChaosPool* pool);
 
 void
-initializeChaosPoolWithRandomValues(ChaosPool* pool);
+initializeChaosPoolWithRandomValues(ChaosPool* pool, int mode);
 
 void
 resetChaosPool(ChaosPool* pool);
@@ -46,10 +65,13 @@ void
 updateAllPoints(ChaosPool* pool);
 
 void
-doRadiation(double intensity, int pos[], double duration, ChaosPool* pool);
+doRadiation(double intensity, Point* point, double duration);
 
 void
-doCrossover(int src[], int dest[], double options[], int optc, ChaosPool* pool);
+doCrossoverByPoints(Point* p1, Point* p2, double options[], int optc, ChaosPool* pool);
+
+void
+doCrossoverByIndexes(int src[], int dest[], double options[], int optc, ChaosPool* pool);
 
 //TODO: is this just a kind of chaos movement?
 void

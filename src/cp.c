@@ -1,15 +1,4 @@
 #include "cp.h"
-#include <stdlib.h>
-#include <math.h>
-
-#define random(x) (double)(rand()%(x*1000000))/1000000
-#define randomInt(x) rand()%x
-#define typeCount 1
-#define DEBUG 1
-
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 /*
  * ChaosPool Management
@@ -45,12 +34,17 @@ swapPoints(int p1[], int p2[], ChaosPool* pool){
 }
 
 void
-initializeChaosPoolWithRandomValues(ChaosPool* pool){
+initializeChaosPoolWithRandomValues(ChaosPool* pool, int mode){
   for(int i = 0; i < pool->overallSize; i++){
     //Randomize the shape of point: specific type and dimension
     pool->pool[i] = (Point*)malloc(sizeof(Point) - sizeof(double) + sizeof(double) * pool->dimension);
     for(int j = 0; j < pool->dimension; j++){
       pool->pool[i]->val[j] = random(30);
+    }
+    if(mode == ALLLORENZMODE){
+      pool->pool[i]->type = LORENZ;
+    }else if(mode == RANDOMMODE){
+      pool->pool[i]->type = randomInt(2);
     }
   }
 }
@@ -67,16 +61,53 @@ printChaosPool(ChaosPool* pool){
 }
 
 /*
- * Atomic Entropy Operations
+ * Atomic Pool Operations
  */
-void updateAllPoints(ChaosPool* pool){
+void
+updatePoint(Point* point){
+  update(point);
+}
+
+void
+updateAllPoints(ChaosPool* pool){
   for(int i = 0; i < pool->overallSize; i++){
     update(pool->pool[i]);
   }
 }
 
+void
+doRadiation(double intensity, Point* point, double duration){
+  //
+}
+
+void
+doCrossoverByPoints(Point* p1, Point* p2, double options[], int optc, ChaosPool* pool){
+  //Crossover: exchange bits: low 32bits
+  for(int i = 0; i < pool->dimension; i++){
+    //
+  }
+}
+
+void
+doCrossoverByIndexes(int src[], int dest[], double options[], int optc, ChaosPool* pool){
+  //assuming all points has the dimension set in pool
+  int pv1 = 0, pv2 = 0;
+  for(int i = 0; i < pool->dimension; i++){
+    pv1 += pow(src[i], pool->dimension - i);
+    pv2 += pow(dest[i], pool->dimension - i);
+  }
+  Point** pc1 = &(pool->pool[pv1]);
+  Point** pc2 = &(pool->pool[pv2]);
+  doCrossoverByPoints(*pc1, *pc2, options, optc, pool);
+}
+
+void
+doBrownianMotion(double duration, ChaosPool* pool){
+  //
+}
+
 /*
- * Managed Entropy Operations
+ * Managed Pool Operations
  */
 void
 evolve(int generations, ChaosPool* pool){
@@ -85,7 +116,75 @@ evolve(int generations, ChaosPool* pool){
   }
 }
 
+void
+stir(double heat, ChaosPool* pool){
+  //
+}
+
+void
+radiate(double intensity, double scope, double duration, ChaosPool* pool){
+  //
+}
+
+void
+performClimateChange(int type, double options[], int optc, ChaosPool* pool){
+  //
+}
+
+void
+performCrossover(double scope, double intensity, double options[], ChaosPool* pool){
+  //
+}
+
 
 /*
  * Entropy Management
  */
+void
+addEntropy(double entropyDelta, ChaosPool* pool){
+  pool->entropy += entropyDelta;
+}
+
+void
+reduceEntropy(double entropyDelta, ChaosPool* pool){
+  //
+}
+
+//Check the amount of entropy requested. If cannot afford it, try to return a reduced value.
+void
+requestEntropy(double* entropy, ChaosPool* pool){
+  //
+}
+
+/*
+ * I/O Operations
+ */
+//Base function for entropy extract
+void
+extractEntropy(char* dest, double entropy, ChaosPool* pool){
+  //
+}
+
+//Add pure entropy into the pool.
+void
+pourEntropy(double entropy, ChaosPool* pool){
+  //
+}
+
+//Add entropy by heating the pool. Might be executed in stirring or adding kinetic energy into points.
+void
+heatPool(double heat, ChaosPool* pool){
+  //
+}
+
+//Add bytes with entropy into the pool.
+void
+addMaterials(double entropy, char* material, int length, ChaosPool* pool){
+  //
+}
+
+/*
+ * Utils
+ */
+char*
+expandBits(char* data, int destLength);

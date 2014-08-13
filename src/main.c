@@ -10,8 +10,8 @@
 
 int
 main(int argc, char** argv){
-  ChaosPool* pool = ChaosPoolBySize(20, 3);
-  initializeChaosPoolWithRandomValues(pool);
+  ChaosPool* pool = ChaosPoolBySize(10, 3);
+  initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
 
   /*
   reset:

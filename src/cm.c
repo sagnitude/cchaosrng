@@ -1,14 +1,5 @@
-#include <stdlib.h>
 #include "cm.h"
 
-#define LORENZ_RHO 28
-#define LORENZ_SIGMA 10
-#define LORENZ_BETA 8/3
-#define DEBUG 1
-
-#ifdef DEBUG
-#include <stdio.h>
-#endif
 
 Point*
 PointByDimension(int length){
@@ -17,11 +8,12 @@ PointByDimension(int length){
 }
 
 Point*
-PointByValues(int argc, double vals[]){
+PointByValues(int argc, double vals[], int type){
   Point* temp = PointByDimension(argc);
   for(int i = 0; i < argc; i++){
     temp->val[i] = vals[i];
   }
+  temp->type = type;
   return temp;
 }
 
