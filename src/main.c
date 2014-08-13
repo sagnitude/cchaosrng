@@ -10,7 +10,7 @@
 
 int
 main(int argc, char** argv){
-  ChaosPool* pool = ChaosPoolBySize(40, 3);
+  ChaosPool* pool = ChaosPoolBySize(5, 3);
   initializeChaosPoolWithRandomValues(pool);
 
   /*
