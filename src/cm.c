@@ -13,6 +13,9 @@ PointByValues(int argc, double vals[], int type){
   for(int i = 0; i < argc; i++){
     temp->val[i] = vals[i];
   }
+  //Random-distributed kenergy, not exactly randomly generated.
+  temp->kenergy = 0;
+  temp->dimension = argc;
   temp->type = type;
   return temp;
 }

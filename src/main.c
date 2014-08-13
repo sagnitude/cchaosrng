@@ -13,6 +13,11 @@ main(int argc, char** argv){
   ChaosPool* pool = ChaosPoolBySize(10, 3);
   initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
 
+  ChaosPool* keyPool = ChaosPoolBySize(100, 1);
+  initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
+
+  evolve(1000000, keyPool);
+
   /*
   reset:
   free(pool);

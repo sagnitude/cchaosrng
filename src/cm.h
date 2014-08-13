@@ -18,7 +18,7 @@
 typedef struct Point{
   double kenergy;
   //Customization of point dimension to be added.
-  // int dimension;
+  int dimension;
   int type;
   double val[1];
 } Point;

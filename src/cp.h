@@ -19,8 +19,9 @@
 #define update(point) switch(point->type){\
   case LORENZ:\
     lorenzUpdater(point, interval);\
+    break;\
   default:\
-    return;\
+    break;\
 }
 #define random(x) (double)(rand()%(x*1000000))/1000000
 #define randomInt(x) rand()%x
@@ -132,3 +133,10 @@ addMaterials(double entropy, char* material, int length, ChaosPool* pool);
  */
 char*
 expandBits(char* data, int destLength);
+
+int
+getIntegerAmongPoint(Point* point);
+
+//NOTE: index here may be beyond the size of pool.
+Point*
+getPointAmongChaosPoolByIndex(int index, ChaosPool* pool);

@@ -187,4 +187,19 @@ addMaterials(double entropy, char* material, int length, ChaosPool* pool){
  * Utils
  */
 char*
-expandBits(char* data, int destLength);
+expandBits(char* data, int destLength){
+  //
+}
+
+//extract an int from a point, using hash-like functions
+int
+getIntegerAmongPoint(Point* point){
+  //
+}
+
+//get a point according an int in a pool.
+//NOTE: index here may be beyond the size of pool.
+Point*
+getPointAmongChaosPoolByIndex(int index, ChaosPool* pool){
+  //
+}
