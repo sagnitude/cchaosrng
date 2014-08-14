@@ -1,18 +1,21 @@
+#ifndef chaospool__
+#define chaospool__
 #include <stdlib.h>
 #include <math.h>
-
-#ifdef DEBUG
 #include <stdio.h>
-#endif
-
-#define CHAOSPOOL
+#include <limits.h>
+#include "common.h"
+#include "cm.h"
+#include "scheduler.h"
 
 #define RANDOMMODE 1
 #define ALLLORENZMODE 2
 
-#ifndef CHAOSMODEL
-#include "cm.h"
-#endif
+#define DEFAULTSHC 1.0
+
+#define DEFAULTTEMPERATURE 20.0
+#define DEFAULTDISTANCE 0.00001 //in meters
+#define UNITMASS(x) 0.0001 * x //mass of a point with dimension
 
 #define interval 0.00001
 //Using macros to customize the update functions for different types: instead of function pointers
@@ -29,26 +32,35 @@
 #define typeCount 1
 #define DEBUG 1
 
-typedef struct ChaosPool{
+struct ChaosPool{
+  //core properties
+  double temperature;
+  //Specific Heat Capacity * mass
+  double shcm;
   double entropy;
+  //the measurement of volume
+  double averageDistance;
   int size;
   int dimension;
   //the dimension of pool
   int overallSize;
+  //control properties
+  int offset;
+  TaskQueue* taskQueue;
+  //data
   Point* pool[1];
-} ChaosPool;
+};
 
-typedef struct MutableDoubleArray{
+struct MutableDoubleArray{
   int length;
   double val[1];
-}MutableDoubleArray;
+};
 
 /*
  * ChaosPool Management
  */
-
-struct ChaosPool*
-ChaosPoolBySize(int size, int dimension);
+ChaosPool*
+ChaosPoolBySize(int size, int dimension, int queueSize, double shc, double temperature, double distance);
 
 void
 swapPoints(int p1[], int p2[], ChaosPool* pool);
@@ -65,14 +77,11 @@ printChaosPool(ChaosPool* pool);
 /*
  * Atomic Pool Operations
  */
-void
+private void
 updatePoint(Point* point);
 
 void
 updateAllPoints(ChaosPool* pool);
-
-void
-doRadiation(double intensity, Point* point, double duration);
 
 void
 doCrossoverByPoints(Point* p1, Point* p2, double options[], int optc, ChaosPool* pool);
@@ -80,9 +89,11 @@ doCrossoverByPoints(Point* p1, Point* p2, double options[], int optc, ChaosPool*
 void
 doCrossoverByIndexes(int src[], int dest[], double options[], int optc, ChaosPool* pool);
 
-//TODO: is this just a kind of chaos movement?
-void
-doBrownianMotion(double duration, ChaosPool* pool);
+private void
+insertAtomicPoint(Point* point, ChaosPool* pool);
+
+private Point*
+getNextPoint(ChaosPool* pool);
 
 /*
  * Managed Pool Operations
@@ -105,44 +116,60 @@ performCrossover(double scope, double intensity, double options[], ChaosPool* po
 /*
  * Entropy Management
  */
-void
+private void
 addEntropy(double entropyDelta, ChaosPool* pool);
 
-void
+private void
 reduceEntropy(double entropyDelta, ChaosPool* pool);
 
 //Check the amount of entropy requested. If cannot afford it, try to return a reduced value.
-void
-requestEntropy(double* entropy, ChaosPool* pool);
+bool
+checkEntropy(double* entropyDelta, ChaosPool* pool);
 
 /*
  * I/O Operations
  */
-//Base function for entropy extract
 void
-extractEntropy(char* dest, double entropy, ChaosPool* pool);
+extractEntropy(char* dest, int length, double entropy, ChaosPool* pool);
+
+void
+extractBits(char* dest, int bits, ChaosPool* pool, int priority);
 
 //Add pure entropy into the pool.
 void
 pourEntropy(double entropy, ChaosPool* pool);
 
-//Add entropy by heating the pool. Might be executed in stirring or adding kinetic energy into points.
+//adding kinetic energy into points.
 void
 heatPool(double heat, ChaosPool* pool);
 
 //Add bytes with entropy into the pool.
 void
-addMaterials(double entropy, char* material, int length, ChaosPool* pool);
+addMaterialsWithEntropy(double entropy, char* material, int length, ChaosPool* pool);
+
+void
+addRawMaterials(char* material, int length, ChaosPool* pool);
+
+private void
+addMaterialsWithoutEntropy(char* material, int length, ChaosPool* pool);
 
 /*
  * Utils
  */
-char*
+private char*
 expandBits(char* data, int destLength);
 
-int
+private int
 getIntegerAmongPoint(Point* point);
 
+private int
+regularizeIntegerToIndex(ChaosPool* pool, int integer);
+
 //NOTE: index here may be beyond the size of pool.
-Point*
+private Point*
 getPointAmongChaosPoolByIndex(int index, ChaosPool* pool);
+
+private void
+evaluatePoolEntropy(ChaosPool* pool);
+
+#endif

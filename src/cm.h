@@ -1,6 +1,8 @@
+#ifndef chaosmodel__
+#define chaosmodel__
+#include "common.h"
 #include <stdlib.h>
-
-#define CHAOSMODEL
+#include <stdio.h>
 
 #define TYPECOUNT 2
 #define RANDOMTYPE 0
@@ -11,19 +13,16 @@
 #define LORENZ_BETA 8/3
 #define DEBUG 1
 
-#ifdef DEBUG
-#include <stdio.h>
-#endif
-
-typedef struct Point{
+struct Point{
   double kenergy;
+  double entropy;
   //Customization of point dimension to be added.
   int dimension;
   int type;
   double val[1];
-} Point;
+};
 
-Point*
+private Point*
 PointByDimension(int length);
 
 Point*
@@ -34,3 +33,11 @@ lorenzUpdater(Point* vals, double interval);
 
 char*
 PointToString(Point* p);
+
+/*
+ * Atomic Point Operations
+ */
+void
+endureRadiation(Point* point, double intensity, double duration);
+
+#endif

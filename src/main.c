@@ -1,32 +1,19 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "cm.h"
-#include "cp.h"
 #include <time.h>
 
-#define MAINSERVER
+#include "cm.h"
+#include "scheduler.h"
+#include "cp.h"
+
 #define PRINTOUT
 // #define PROFILE
 // #define CONTROL
 
 int
 main(int argc, char** argv){
-  ChaosPool* pool = ChaosPoolBySize(2, 3);
+  ChaosPool* pool = ChaosPoolBySize(2, 3, 20, DEFAULTSHC, DEFAULTTEMPERATURE, DEFAULTDISTANCE);
   initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
-
-  #ifdef CONTROL
-  ChaosPool* keyPool = ChaosPoolBySize(100, 1);
-  initializeChaosPoolWithRandomValues(keyPool, ALLLORENZMODE);
-
-  evolve(1000000, keyPool);
-  #endif
-
-  /*
-  reset:
-  free(pool);
-  ChaosPool* pool = ChaosPoolBySize(2, 3);
-  initializeChaosPoolWithRandomValues(pool);
-  */
 
   #ifdef PRINTOUT
   printChaosPool(pool);

@@ -6,3 +6,4 @@ desktop.ini
 */CmakeFiles/
 Makefile
 cmake_install.cmake
+*.exe

@@ -5,17 +5,22 @@
  */
 
 ChaosPool*
-ChaosPoolBySize(int size, int dimension){
+ChaosPoolBySize(int size, int dimension, int queueSize, double shc, double temperature, double distance){
   int overallSize = 1;
   for(int i = 0;i < dimension; i++){
     overallSize*=size;
   }
   int truePointSize = sizeof(Point*);
   int nsize = overallSize * truePointSize + sizeof(ChaosPool) - sizeof(Point*);
-  ChaosPool* pool = (struct ChaosPool*)malloc(nsize);
+  ChaosPool* pool = (ChaosPool*)malloc(nsize);
+  pool -> temperature = temperature;
   pool -> size = size;
   pool -> dimension = dimension;
   pool -> overallSize = overallSize;
+  pool -> averageDistance = distance;
+  pool -> offset = 0;
+  pool -> taskQueue = newTaskQueueWithPool(queueSize, pool);
+  pool -> shcm = shc * UNITMASS(dimension) * overallSize;
   return pool;
 }
 
@@ -46,6 +51,11 @@ initializeChaosPoolWithRandomValues(ChaosPool* pool, int mode){
 }
 
 void
+resetChaosPool(ChaosPool* pool){
+  //
+}
+
+void
 printChaosPool(ChaosPool* pool){
   for(int i = 0; i < pool->overallSize; i++){
     printf("< ");
@@ -72,15 +82,10 @@ updateAllPoints(ChaosPool* pool){
 }
 
 void
-doRadiation(double intensity, Point* point, double duration){
-  //
-}
-
-void
 doCrossoverByPoints(Point* p1, Point* p2, double options[], int optc, ChaosPool* pool){
   //Crossover: exchange bits: low 32bits
   for(int i = 0; i < pool->dimension; i++){
-    //
+    //TODO: the format of opts to be impl.
   }
 }
 
@@ -98,8 +103,16 @@ doCrossoverByIndexes(int src[], int dest[], double options[], int optc, ChaosPoo
 }
 
 void
-doBrownianMotion(double duration, ChaosPool* pool){
-  //
+insertAtomicPoint(Point* point, ChaosPool* pool){
+  double opts[] = {0.0};
+  doCrossoverByPoints(point, getNextPoint(pool), opts, 1, pool);
+}
+
+Point*
+getNextPoint(ChaosPool* pool){
+  Point* np = pool->pool[pool->offset];
+  pool->offset = regularizeIntegerToIndex(pool, getIntegerAmongPoint(np));
+  return np;
 }
 
 /*
@@ -143,21 +156,27 @@ addEntropy(double entropyDelta, ChaosPool* pool){
 
 void
 reduceEntropy(double entropyDelta, ChaosPool* pool){
-  //
+  pool->entropy -= entropyDelta;
 }
 
 //Check the amount of entropy requested. If cannot afford it, try to return a reduced value.
-void
-requestEntropy(double* entropy, ChaosPool* pool){
+bool
+checkEntropy(double* entropyDelta, ChaosPool* pool){
   //
+  return true;
 }
 
 /*
  * I/O Operations
  */
-//Base function for entropy extract
+//Extract entropy according to specific entropy size
 void
-extractEntropy(char* dest, double entropy, ChaosPool* pool){
+extractEntropy(char* dest, int length, double entropy, ChaosPool* pool){
+  //
+}
+
+void
+extractBits(char* dest, int bits, ChaosPool* pool, int priority){
   //
 }
 
@@ -167,15 +186,33 @@ pourEntropy(double entropy, ChaosPool* pool){
   //
 }
 
-//Add entropy by heating the pool. Might be executed in stirring or adding kinetic energy into points.
+//adding kinetic energy into points.
 void
 heatPool(double heat, ChaosPool* pool){
-  //
+  double averageHeat = heat / pool->overallSize;
+  for(int i = 0; i < pool->overallSize; i++){
+    pool->pool[i]->kenergy += averageHeat;
+  }
 }
 
 //Add bytes with entropy into the pool.
 void
-addMaterials(double entropy, char* material, int length, ChaosPool* pool){
+addMaterialsWithEntropy(double entropy, char* material, int length, ChaosPool* pool){
+  if(checkEntropy(&entropy, pool)){
+    addEntropy(entropy, pool);
+    addMaterialsWithoutEntropy(material, length, pool);
+  }else{
+    perror("NOTE: no enough space for input entropy, only part of the entropy will be accepted.\n");
+  }
+}
+
+void
+addRawMaterials(char* material, int length, ChaosPool* pool){
+  addMaterialsWithEntropy(estimateEntropyInData(material, length), material, length, pool);
+}
+
+void
+addMaterialsWithoutEntropy(char* material, int length, ChaosPool* pool){
   //
 }
 
@@ -193,9 +230,24 @@ getIntegerAmongPoint(Point* point){
   //
 }
 
+int
+regularizeIntegerToIndex(ChaosPool* pool, int integer){
+  return ((1.0 * integer) / INT_MAX) * pool->overallSize;
+}
+
 //get a point according an int in a pool.
 //NOTE: index here may be beyond the size of pool.
 Point*
 getPointAmongChaosPoolByIndex(int index, ChaosPool* pool){
+  //
+}
+
+void
+evaluatePoolEntropy(ChaosPool* pool){
+  pool -> entropy = estimateEntropyInData((char*)pool->pool[0], pool->overallSize * pool->dimension * 4);
+}
+
+double
+calculateCapacityOfDataBlock(int bits){
   //
 }
