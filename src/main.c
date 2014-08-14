@@ -5,18 +5,21 @@
 #include <time.h>
 
 #define MAINSERVER
-// #define PRINTOUT
-#define PROFILE
+#define PRINTOUT
+// #define PROFILE
+// #define CONTROL
 
 int
 main(int argc, char** argv){
-  ChaosPool* pool = ChaosPoolBySize(10, 3);
+  ChaosPool* pool = ChaosPoolBySize(2, 3);
   initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
 
+  #ifdef CONTROL
   ChaosPool* keyPool = ChaosPoolBySize(100, 1);
-  initializeChaosPoolWithRandomValues(pool, ALLLORENZMODE);
+  initializeChaosPoolWithRandomValues(keyPool, ALLLORENZMODE);
 
   evolve(1000000, keyPool);
+  #endif
 
   /*
   reset:
@@ -34,7 +37,7 @@ main(int argc, char** argv){
   t_start = clock();
   #endif
 
-  evolve(100000, pool);
+  evolve(1000000, pool);
 
   #ifdef PROFILE
   t_end = clock() ;

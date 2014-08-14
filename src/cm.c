@@ -3,8 +3,7 @@
 
 Point*
 PointByDimension(int length){
-  printf("accepting %d, returning %ld\n", length, sizeof(Point) * length);
-  return (Point*)malloc(sizeof(Point) * length);
+  return (Point*)malloc(sizeof(Point) + (length - 1) * sizeof(double));
 }
 
 Point*

@@ -37,15 +37,11 @@ void
 initializeChaosPoolWithRandomValues(ChaosPool* pool, int mode){
   for(int i = 0; i < pool->overallSize; i++){
     //Randomize the shape of point: specific type and dimension
-    pool->pool[i] = (Point*)malloc(sizeof(Point) - sizeof(double) + sizeof(double) * pool->dimension);
-    for(int j = 0; j < pool->dimension; j++){
-      pool->pool[i]->val[j] = random(30);
+    MutableDoubleArray* array = (MutableDoubleArray*)malloc(sizeof(MutableDoubleArray) + (pool->dimension - 1)*sizeof(double));
+    for(int i = 0; i < pool->dimension; i++){
+      array->val[i] = random(30);
     }
-    if(mode == ALLLORENZMODE){
-      pool->pool[i]->type = LORENZ;
-    }else if(mode == RANDOMMODE){
-      pool->pool[i]->type = randomInt(2);
-    }
+    pool->pool[i] = PointByValues(pool->dimension, array->val, LORENZ);
   }
 }
 
@@ -54,7 +50,7 @@ printChaosPool(ChaosPool* pool){
   for(int i = 0; i < pool->overallSize; i++){
     printf("< ");
     for(int j = 0; j < pool->dimension; j++){
-      printf(" %lf ", pool->pool[i]->val[j]);
+      printf(" %f ", pool->pool[i]->val[j]);
     }
     printf(">\n");
   }

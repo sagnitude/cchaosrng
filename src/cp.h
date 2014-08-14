@@ -23,7 +23,8 @@
   default:\
     break;\
 }
-#define random(x) (double)(rand()%(x*1000000))/1000000
+#define random(x) (x * 1.0 * rand()) / (RAND_MAX + 1)
+#define rangeRandom(x, y) random(y - x) - x
 #define randomInt(x) rand()%x
 #define typeCount 1
 #define DEBUG 1
@@ -36,6 +37,11 @@ typedef struct ChaosPool{
   int overallSize;
   Point* pool[1];
 } ChaosPool;
+
+typedef struct MutableDoubleArray{
+  int length;
+  double val[1];
+}MutableDoubleArray;
 
 /*
  * ChaosPool Management
