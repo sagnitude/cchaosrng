@@ -22,7 +22,7 @@ addTaskToQueue(Task* newTask, TaskQueue* taskQueue){
   if(taskQueue->size == taskQueue->offset){
     //expand queue
     TaskQueue* backup = taskQueue;
-    taskQueue = realloc(taskQueue, taskQueue->size * 2);
+    taskQueue = realloc(taskQueue, sizeof(TaskQueue) + (taskQueue->size * 2 - 1) * sizeof(Task*));
     if(!taskQueue){
       taskQueue = backup;
       perror("Reallocating memory failed.\n");

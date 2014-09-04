@@ -6,7 +6,7 @@
 #include "scheduler.h"
 #include "cp.h"
 
-#define PRINTOUT
+// #define PRINTOUT
 // #define PROFILE
 // #define CONTROL
 
@@ -38,6 +38,19 @@ main(int argc, char** argv){
   printf("\n\n");
   printChaosPool(pool);
   #endif
+
+char ch = 'U';
+printChaosPool(pool);
+insertAtomicChar(&ch, pool);
+insertAtomicChar(&ch, pool);
+insertAtomicChar(&ch, pool);
+insertAtomicChar(&ch, pool);
+// insertAtomicChar(&ch, pool);
+// insertAtomicChar(&ch, pool);
+// insertAtomicChar(&ch, pool);
+// insertAtomicChar(&ch, pool);
+// insertAtomicChar(&ch, pool);
+printChaosPool(pool);
 
   return 0;
 }

@@ -16,6 +16,8 @@
 #define DEFAULTTEMPERATURE 20.0
 #define DEFAULTDISTANCE 0.00001 //in meters
 #define UNITMASS(x) 0.0001 * x //mass of a point with dimension
+#define GRANULARITY_LOW 6
+#define GRANULARITY_HIGH 7
 
 #define interval 0.00001
 //Using macros to customize the update functions for different types: instead of function pointers
@@ -92,6 +94,9 @@ doCrossoverByIndexes(int src[], int dest[], double options[], int optc, ChaosPoo
 private void
 insertAtomicPoint(Point* point, ChaosPool* pool);
 
+void
+insertAtomicChar(char* ch, ChaosPool* pool);
+
 private Point*
 getNextPoint(ChaosPool* pool);
 
@@ -159,11 +164,11 @@ addMaterialsWithoutEntropy(char* material, int length, ChaosPool* pool);
 private char*
 expandBits(char* data, int destLength);
 
-private int
+private unsigned int
 getIntegerAmongPoint(Point* point);
 
 private int
-regularizeIntegerToIndex(ChaosPool* pool, int integer);
+regularizeIntegerToIndex(ChaosPool* pool, unsigned int integer);
 
 //NOTE: index here may be beyond the size of pool.
 private Point*

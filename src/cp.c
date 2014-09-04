@@ -108,6 +108,16 @@ insertAtomicPoint(Point* point, ChaosPool* pool){
   doCrossoverByPoints(point, getNextPoint(pool), opts, 1, pool);
 }
 
+void
+insertAtomicChar(char* ch, ChaosPool* pool){
+  printf("%d  %f\n", pool->offset, pool->pool[pool->offset]->val[0]);
+  Point* np = getNextPoint(pool);
+  char tch = *ch;
+  for(int i = 0; i < np->dimension; i++){
+    tch = rolloverXor(tch, &(np->val[i]), GRANULARITY_LOW);//the top byte is significant byte
+  }
+}
+
 Point*
 getNextPoint(ChaosPool* pool){
   Point* np = pool->pool[pool->offset];
@@ -213,7 +223,10 @@ addRawMaterials(char* material, int length, ChaosPool* pool){
 
 void
 addMaterialsWithoutEntropy(char* material, int length, ChaosPool* pool){
-  //
+  int* reader = (int*)material;
+  for(int i = 0; i <= length; i++){
+    insertAtomicChar(material++, pool);
+  }
 }
 
 /*
@@ -225,14 +238,23 @@ expandBits(char* data, int destLength){
 }
 
 //extract an int from a point, using hash-like functions
-int
+unsigned int
 getIntegerAmongPoint(Point* point){
-  //
+  unsigned int x = 1431653717;//1010101010101010100110101010101, magic number
+  int* t = (int*)malloc(sizeof(double));
+  for(int i = 0; i < point->dimension; i++){
+    int* tc = (int*)&(point->val[i]);
+    *(t++) = *(tc++);
+    x ^= *t;
+    *(t) = *(tc);
+    x ^= *t;
+  }
+  return x;
 }
 
 int
-regularizeIntegerToIndex(ChaosPool* pool, int integer){
-  return ((1.0 * integer) / INT_MAX) * pool->overallSize;
+regularizeIntegerToIndex(ChaosPool* pool, unsigned int integer){
+  return integer % pool->overallSize;
 }
 
 //get a point according an int in a pool.
