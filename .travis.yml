@@ -6,6 +6,7 @@ compiler:
 
 before_install:
   - sudo apt-get install cmake
+  - sudo chmod 777 ./bin/build_mac.sh
 
 script:
   - ./bin/build_mac.sh
