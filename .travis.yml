@@ -8,6 +8,19 @@ before_install:
   - sudo apt-get install cmake
   - sudo chmod 777 ./bin/build_mac.sh
 
-script:
-  - cmake . ./bin -G "MinGW Makefiles"
+env:
+  - TRAVIS_BUILD_TYPE=Debug TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
+  - TRAVIS_BUILD_TYPE=Release TRAVIS_CMAKE_GENERATOR="Unix Makefiles"
+
+before_script:
+  - mkdir _build
+  - cd _build
+  - cmake .. -G"${TRAVIS_CMAKE_GENERATOR}" -DCMAKE_BUILD_TYPE=${TRAVIS_BUILD_TYPE} -DCMAKE_INSTALL_PREFIX=$(pwd)/../install -DYCM_MAINTAINER_MODE=ON
   - make
+
+script:
+  - cmake --build . --config ${TRAVIS_BUILD_TYPE} && make
+
+after_success:
+  - cmake --build . --config ${TRAVIS_BUILD_TYPE} --target install
+  - ctest --build . --config ${TRAVIS_BUILD_TYPE}
