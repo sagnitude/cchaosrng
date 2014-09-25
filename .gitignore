@@ -2,8 +2,8 @@
 .idea/
 .DS_Store
 desktop.ini
-*/CMakeCache.txt
-*/CmakeFiles/
+CMakeCache.txt
+CMakeFiles/
 Makefile
 cmake_install.cmake
 *.exe
