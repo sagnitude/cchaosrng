@@ -9,5 +9,5 @@ before_install:
   - sudo chmod 777 ./bin/build_mac.sh
 
 script:
-  - ./bin/build_mac.sh
+  - cmake . ./bin -G "MinGW Makefiles"
   - make
